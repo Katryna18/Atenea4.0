@@ -1,0 +1,65 @@
+#panelOpcion {
+    position: absolute;
+    top: 10%;
+    right: 0;
+    z-index: 1;
+}
+
+#panelOpcionLeft {
+    position: absolute;
+    top: 10%;
+    left:0;
+    z-index: 1;
+}
+
+.btn_card {
+    background: rgb(255, 255, 255) none repeat scroll 0% 0%;
+    height: 40px;
+    width: 40px;
+    margin: 10px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+    border: 0px;
+}
+
+.modal-contenido {
+    background-color: white;
+    width: 300px;
+    padding: 10px 20px;
+    margin: 20% auto;
+    position: relative;
+}
+
+.aqua-modal {
+    background-color: rgba(0, 0, 0, .8);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+#map {
+    height: 100%;
+    min-width: 340px;
+}
+
+.cicular {
+    height: 40px;
+    width: 40px;
+    background: white;
+    border-radius: 50%;
+    border: 1px solid #1D9AF2;
+    border-top: 2px solid #fff;
+    animation: spinner1 600ms linear infinite;
+}
+
+@keyframes spinner1 {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#pnCircular {
+    display: flex;
+    justify-content: center;
+}
