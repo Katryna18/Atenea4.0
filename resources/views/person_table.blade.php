@@ -544,7 +544,7 @@
                     "<td title='Gráfica'> <a target='_blank' href='{{ url('/dashboard/') }}/" + element.documento +
                     "'> <svg width='20px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g><g id='SVGRepo_iconCarrier'> <path d='M21 21H4.6C4.03995 21 3.75992 21 3.54601 20.891C3.35785 20.7951 3.20487 20.6422 3.10899 20.454C3 20.2401 3 19.9601 3 19.4V3M20 8L16.0811 12.1827C15.9326 12.3412 15.8584 12.4204 15.7688 12.4614C15.6897 12.4976 15.6026 12.5125 15.516 12.5047C15.4179 12.4958 15.3215 12.4458 15.1287 12.3457L11.8713 10.6543C11.6785 10.5542 11.5821 10.5042 11.484 10.4953C11.3974 10.4875 11.3103 10.5024 11.2312 10.5386C11.1416 10.5796 11.0674 10.6588 10.9189 10.8173L7 15' stroke='#000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'></path> </g></svg> </a> </td>"
 
-                    tr += "<td title='Descargar Consentimiento'><svg width='24px' height='24px' onclick='downloadConsent(" + element.id + ")' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path fill='none' d='M0 0h24v24H0z'/><path d='M17.293 7.293l-4.996 4.996a.5.5 0 0 1-.708 0l-4.996-4.996a.5.5 0 1 1 .708-.708L12 11.293V3.5a.5.5 0 0 1 1 0v7.793l3.293-3.293a.5.5 0 0 1 .708.708z'/><path d='M5 21a.5.5 0 0 1-.5-.5V10.707a.5.5 0 0 1 .854-.354L12 14.793l5.646-5.646a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1-.146-.354V20.5a.5.5 0 0 1-.5.5z'/></svg></td>";
+                tr += "<td title='Descargar Consentimiento'><svg width='24px' height='24px' onclick='downloadConsent(" + element.id + ")' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path fill='none' d='M0 0h24v24H0z'/><path d='M17.293 7.293l-4.996 4.996a.5.5 0 0 1-.708 0l-4.996-4.996a.5.5 0 1 1 .708-.708L12 11.293V3.5a.5.5 0 0 1 1 0v7.793l3.293-3.293a.5.5 0 0 1 .708.708z'/><path d='M5 21a.5.5 0 0 1-.5-.5V10.707a.5.5 0 0 1 .854-.354L12 14.793l5.646-5.646a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1-.146-.354V20.5a.5.5 0 0 1-.5.5z'/></svg></td>";
 
 
                 tr += "<td title='Eliminar'><svg width='20px' onclick='personDelete(" + element.id +
@@ -736,10 +736,10 @@
             });
         }
 
-        //FUNCIÓN DESCAGAR CONSENTIMIENTO
-        function downloadConsent(id) {
+      //FUNCIÓN DESCAGAR CONSENTIMIENTO
+      function downloadConsent(id) {
     // Obtiene el elemento de carga de archivos
-    const inputFile = document.getElementById('uploadFile');
+    const inputFile = document.getElementById("uploadFile");
 
     // Verifica si se ha seleccionado un archivo
     if (inputFile.files.length > 0) {
@@ -747,16 +747,15 @@
 
         // Crea un enlace de descarga para el archivo
         const downloadLink = document.createElement("a");
-        downloadLink.href = URL.CreateObjectURL(file);
+        downloadLink.href = URL.createObjectURL(file);
         downloadLink.download = "consentimiento"; // Nombre de descarga deseado
         downloadLink.style.display = "none";
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-        
-
     }
 }
+
 
         /*MEDIDA*/
         function viewMedida(id) {
