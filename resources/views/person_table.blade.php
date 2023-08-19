@@ -35,6 +35,7 @@
                         <div class="col-md-5">
                             <label for="ddlIeTable">Institución</label>
                             <select id="ddlIeTable" class="form-control form-control-sm" required="">
+                                <option value='default'>SELECCIONAR</option>
                                 @foreach ($entidad as $item)
                                     <option value='{{ $item->id }}'> {{ $item->nombre }} </option>
                                 @endforeach
@@ -44,6 +45,7 @@
                         <div class="col-md-2">
                             <label for="ddlGradoTable">Grado</label>
                             <select id="ddlGradoTable" class="form-control form-control-sm" required="">
+                                <option value='default'>SELECCIONAR</option>
                                 @for ($i = 0; $i < 12; $i++)
                                     <option value='{{ $i }}'> {{ $i }} </option>
                                 @endfor
@@ -53,15 +55,58 @@
                         <div class="col-md-3">
                             <label for="ddlGrupoTable">Grupo</label>
                             <select id="ddlGrupoTable" class="form-control form-control-sm" required="">
-                                <!--foreach ($grupo as $item)
-                                <option value='{ $item->id }}'> { $item->nombre }} </option>
-                            endforeach-->
+                                <option value='default'> SELECCIONAR </option>
+                                @foreach ($grupo as $item)
+                                <option value='{{ $item->id }}'> {{ $item->nombre }} </option>
+                                @endforeach
                             </select>
                         </div>
 
                         <div class="col-md-1">
 
-                            <button onclick="getData()" style="top: 50%; position: relative;" id="btnGuardar"
+                            <button onclick="cleanerData()" style="top: 50%; position: relative;" id="btnLimpiar"
+                            type="button" class="btn btn-warning btn-sm">Limpiar</button>
+
+                        </div>
+
+                        <div class="col-md-5">
+                            <label for="ddlEdad">Edad</label>
+                            <select id="ddlEdad" class="form-control form-control-sm" required="">
+                                <option value='default'> SELECCIONAR </option>
+                                @foreach ($edad as $item)
+                                    <option value='{{ $item->edad }}'> {{ $item->edad }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="ddlJornada">Jornada</label>
+                            <select id="ddlJornada" class="form-control form-control-sm" required="">
+                                <option value='default'>SELECCIONAR</option>
+                                <option value='MAÑANA'>MAÑANA</option>
+                                <option value='TARDE'>TARDE</option>
+                                <option value='ÚNICA'>ÚNICA</option>
+                               <!-- @for ($i = 0; $i < 12; $i++)
+                                    <option value='{{ $i }}'> {{ $i }} </option>
+                                @endfor-->
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="ddlSexo">Genero</label>
+                            <select id="ddlSexo" class="form-control form-control-sm" required="">
+                                <option value='default'> SELECCIONAR </option>
+                                <option value='MASCULINO'> MASCULINO </option>
+                                <option value='FEMENINO'> FEMENINO </option>
+                               <!-- @for ($i = 0; $i < 12; $i++)
+                                    <option value='{{ $i }}'> {{ $i }} </option>
+                                @endfor-->
+                            </select>
+                        </div>
+
+                        <div class="col-md-1">
+
+                            <button onclick="selectForData()" style="top: 50%; position: relative;" id="btnGuardar"
                                 type="button" class="btn btn-primary btn-sm">Consultar</button>
 
                         </div>
@@ -72,7 +117,12 @@
 
                         </div>
 
+
+
                     </div>
+
+                    
+
                     <hr>
                     <div class="row">
                         <table class="table table-striped table table-hover">
@@ -183,7 +233,31 @@
             });
         }
 
-        $('#ddlGradoTable').on('change', function() {
+        /**
+         * Boton para limpiar datos
+         */
+        function cleanerData(){
+
+            // Obtener referencias a elementos HTML
+            const select = document.getElementById("ddlIeTable");
+            select.selectedIndex = 0
+            const selectGrado = document.getElementById("ddlGradoTable");
+            selectGrado.selectedIndex = 0
+            const selectGrupo = document.getElementById("ddlGrupoTable");
+            selectGrupo.selectedIndex = 0
+            const selectJornada = document.getElementById("ddlJornada");
+            selectJornada.selectedIndex = 0
+            const selectSexo = document.getElementById("ddlSexo");
+            selectSexo.selectedIndex = 0
+            const selectEdad = document.getElementById("ddlEdad");
+            selectEdad.selectedIndex = 0
+        }
+
+        /**
+         * Se comenta el evento para poder consultar por separado
+         */
+
+        /*$('#ddlGradoTable').on('change', function() {
 
             var result = dataGrupo.filter((b) => {
                 return (b.grado_id == this.value)
@@ -198,7 +272,11 @@
                     text: element.nombre
                 }));
             });
-        });
+        });*/
+
+        /**
+         * Funcion original para consultar por entidad,grado y grupo
+         */
 
         function getData() {
             $.ajax({
@@ -216,6 +294,194 @@
                 }
             });
         }
+
+        /**
+         * Funcion validacion de campos para consulta
+         */
+        function validateInputForSelect(){
+
+            
+            if (identidad == "default" && grado == "default" && grupo == "default" && jornada == "default" && sexo == "default" && edad == "default") {
+                Swal.fire(
+                            '',
+                            'Seleccione los campos a consultar',
+                            'error'
+                        );
+            }else if(identidad != "default" && grado == "default" && grupo == "default" && jornada == "default" && sexo == "default" && edad == "default"){
+                getDataInstitution()
+            }else if(identidad == "default" && grado != "default" && grupo == "default" && jornada == "default" && sexo == "default" && edad == "default"){
+                getDataGrado()
+            }else if(identidad == "default" && grado == "default" && grupo != "default" && jornada == "default" && sexo == "default" && edad == "default"){
+                getDataGrupoC()
+            }else if(identidad == "default" && grado == "default" && grupo == "default" && jornada != "default" && sexo == "default" && edad == "default"){
+                getDataJornada()
+            }else if(identidad == "default" && grado == "default" && grupo == "default" && jornada == "default" && sexo != "default" && edad == "default"){
+                getDataGenero()
+            }else if(identidad == "default" && grado == "default" && grupo == "default" && jornada == "default" && sexo == "default" && edad != "default"){
+                getDataEdad()
+            }else if(identidad != "default" && grado != "default" && grupo != "default" && jornada == "default" && sexo == "default" && edad == "default"){
+                getData()
+            }else{
+                Swal.fire(
+                            '',
+                            'Seleccione los campos a consultar',
+                            'error'
+                        );
+            }
+        }
+
+        /**
+         * Consulta multiple
+         */
+        function selectForData(){
+
+            console.log("Entrando")
+            let dataJson = {
+             "identidad":$("#ddlIeTable").val(),
+             "grado":$("#ddlGradoTable").val(),
+             "grupo": $("#ddlGrupoTable").val(),
+             "jornada": $("#ddlJornada").val(),
+             "genero":$("#ddlSexo").val(),
+             "edad": $("#ddlEdad").val()
+            }
+
+            if (dataJson.identidad == "default" && dataJson.grado == "default" && dataJson.grupo == "default" && dataJson.jornada == "default" && dataJson.genero == "default" && dataJson.edad == "default") {
+                Swal.fire(
+                            '',
+                            'Seleccione los campos a consultar',
+                            'error'
+                        );
+            }else{ 
+
+                console.log(dataJson)
+
+                $.ajax({
+                url: '{{ env('APP_URL_API') . '/personSelect' }}',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(dataJson),
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data)
+                    tabla(data);
+                }
+                });
+            }
+        }
+
+        /**
+         * Función para obtner los datos por institucion
+         */
+
+        function getDataInstitution() {
+            $.ajax({
+                url: '{{ env('APP_URL_API') . '/personInstitution' }}',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    'entidad': $("#ddlIeTable").val()
+                }),
+                dataType: 'json',
+                success: function(data) {
+                    tabla(data);
+                }
+            });
+        }
+
+        /**
+         *  Función para obtner los datos por grado
+         */
+
+        function getDataGrado() {
+            $.ajax({
+                url: '{{ env('APP_URL_API') . '/personGrado' }}',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    'grado': $("#ddlGradoTable").val()
+                }),
+                dataType: 'json',
+                success: function(data) {
+                    tabla(data);
+                }
+            });
+        }
+
+        /**
+         *  Función para obtner los datos por grupo
+         */
+
+         function getDataGrupoC() {
+            $.ajax({
+                url: '{{ env('APP_URL_API') . '/personGrupo' }}',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    'grupo': $("#ddlGrupoTable").val()
+                }),
+                dataType: 'json',
+                success: function(data) {
+                    tabla(data);
+                }
+            });
+        }
+
+        /**
+         *  Función para obtener los datos por genero
+         */
+        function getDataGenero(){
+            $.ajax({
+                url: '{{ env('APP_URL_API') . '/personGenero' }}',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    'genero': $("#ddlSexo").val()
+                }),
+                dataType: 'json',
+                success: function(data) {
+                    tabla(data);
+                }
+            });
+        }
+
+        /**
+         *  Función para obtener los datos por jornada
+         */
+        function getDataJornada(){
+            $.ajax({
+                url: '{{ env('APP_URL_API') . '/personJornada' }}',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    'jornada': $("#ddlJornada").val()
+                }),
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data)
+                    tabla(data);
+                }
+            });
+        }
+
+        /**
+         *  Función para obtener los datos de la edad y devolver al select
+         */
+
+         function getDataEdad(){
+            $.ajax({
+                url: '{{ env('APP_URL_API') . '/personEdad' }}',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    'edad': $("#ddlEdad").val()
+                }),
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data)
+                    tabla(data);
+                }
+            });
+         }
 
         function getDataNumeroDoco() {
             $.ajax({
@@ -242,11 +508,12 @@
                 }),
                 dataType: 'json',
                 success: function(data) {
-                    $("#modal_persons_graficas").modal();
-                    IMC(data.IMC);
-                    FCMasculino(data.FCMasculino);
-                    FCFemenino(data.FCFemenino);
-                    PA(data.PA)
+                    //$("#modal_persons_graficas").modal();
+                    console.log(data)
+                    //IMC(data.IMC);
+                    //FCMasculino(data.FCMasculino);
+                    //FCFemenino(data.FCFemenino);
+                    //PA(data.PA)
                 }
             });
         }

@@ -20,6 +20,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('person', 'RegisterController@person');
 
+Route::post('personInstitution', 'RegisterController@reporteInstitucion');
+
+Route::post('personGrado','RegisterController@reporteGrado');
+
+Route::post('personGrupo', 'RegisterController@reporteGrupo');
+
+Route::post('personGenero', 'RegisterController@reporteGenero');
+
+Route::post('personJornada','RegisterController@reporteJornada');
+
+Route::post('personSelect','RegisterController@selectForInputFront');
+
+Route::post('personEdad','RegisterController@reporteEdad');
+
+Route::get('dataEdad','RegisterController@dataEdad');
+
 Route::post('person_doco', 'RegisterController@personDoco');
 
 Route::post('registerPerson', 'RegisterController@registerPerson');

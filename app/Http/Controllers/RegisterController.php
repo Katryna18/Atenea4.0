@@ -7,6 +7,7 @@ use App\Models\Grupo;
 use App\Models\Historico;
 use App\Models\Persona;
 use App\Models\ViewFCFemenino;
+use App\Models\ViewEdad;
 use App\Models\ViewFCMasculino;
 use App\Models\ViewIMC;
 use App\Models\viewPAFemenino;
@@ -25,6 +26,7 @@ class RegisterController extends Controller
         return view('person_table', [
             'entidad' => Entidad::where('estado', 1)->get(),
             'grupo' => Grupo::where('estado', 1)->get(),
+            'edad' => ViewEdad::where('edad', '<>', '')->get(),
         ]);
     }
 
@@ -76,6 +78,192 @@ class RegisterController extends Controller
 
         return response()->json($response);
     }
+
+    /**
+     * Consulta de datos por solo Institución
+     */
+    public function reporteInstitucion(Request $request)
+    {
+        $response = ['status' => 200, 'message' => '', 'data' => []];
+        try {
+
+            $response['data'] =  Persona::where('entidad', $request->entidad)
+                ->where('estado', 1)
+                ->get();
+        } catch (\Throwable $th) {
+        }
+
+        return response()->json($response);
+    }
+
+    /**
+     * Consulta de datos por Grado 
+     */
+    public function reporteGrado(Request $request)
+    {
+        $response = ['status' => 200, 'message' => '', 'data' => []];
+        try {
+
+            $response['data'] =  Persona::where('grado', $request->grado)
+                ->where('estado', 1)
+                ->get();
+        } catch (\Throwable $th) {
+        }
+
+        return response()->json($response);
+    }
+
+    /**
+     * Consulta de datos por Grupo
+     */
+    public function reporteGrupo(Request $request)
+    {
+        $response = ['status' => 200, 'message' => '', 'data' => []];
+        try {
+
+            $response['data'] =  Persona::where('grupo', $request->grupo)
+                ->where('estado', 1)
+                ->get();
+        } catch (\Throwable $th) {
+        }
+
+        return response()->json($response);
+    }
+
+    /**
+     * Consulta de datos para ternar la genero
+     */
+    public function reporteGenero(Request $request)
+    {
+        $response = ['status' => 200, 'message' => '', 'data' => []];
+        try {
+
+            $response['data'] =  Persona::where('genero', $request->genero)
+                ->where('estado', 1)
+                ->get();
+        } catch (\Throwable $th) {
+        }
+
+        return response()->json($response);
+    }
+    
+    /**
+     * Consulta de datos para ternar la jornada
+     */
+    public function reporteJornada(Request $request)
+    {
+        $response = ['status' => 200, 'message' => '', 'data' => []];
+        try {
+
+            $response['data'] =  Persona::where('jornada', $request->jornada)
+                ->where('estado', 1)
+                ->get();
+        } catch (\Throwable $th) {
+        }
+
+        return response()->json($response);
+    }
+    /**
+     * Consulta de datos para ternar la edad
+     */
+    public function reporteEdad(Request $request)
+    {
+        $response = ['status' => 200, 'message' => '', 'data' => []];
+        try {
+            
+            $response['data'] =  DB::select("CALL obtenerRegistrosPorEdad(?)", array($request->edad));
+
+            return response()->json($response);
+
+        } catch (\Throwable $th) {
+            return json_encode(['status' => 500, 'message' => $th->getMessage()]);
+
+        }
+
+    }
+
+    /**
+     * Consulta de datos para ternar la edad
+     */
+    public function dataEdad(Request $request)
+    {
+        $response = ['status' => 200, 'message' => '', 'data' => []];
+        try {
+
+            $response['data']  = ViewEdad::where('edad', '<>', '')
+            ->get();
+
+        } catch (\Throwable $th) {
+        }
+
+        return response()->json($response);
+    }
+
+    /**
+     * Consulta multiple por select desde campos 
+     */
+    public function selectForInputFront(Request $request)
+    {
+        $response = ['status' => 200, 'message' => '', 'data' => []];
+        try {
+
+            $customQuery = "SELECT * FROM PERSONA WHERE ";
+
+            //echo $customQuery;
+
+            $edad = $request->edad;
+            //var_dump($edad);
+            $grado = $request->grado;
+            //var_dump($grado);
+            $grupo = $request->grupo;
+            //var_dump($grupo);
+            $identidad = $request->identidad;
+            //var_dump($identidad);
+            $jornada = $request->jornada;
+            //var_dump($jornada);
+            $genero = $request->genero;
+            //var_dump($genero);
+
+            
+            if($grado !== 'default'){
+                $customQuery .= " grado = '$grado' AND";
+            }
+            if($grupo !== 'default'){
+                $customQuery .= " grupo = '$grupo' AND";
+            }
+            if($identidad !== 'default'){
+                $customQuery .= " entidad = '$identidad' AND";
+            }
+            if($jornada !== 'default'){
+                $customQuery .= " jornada = '$jornada' AND";
+            }
+            if($genero !== 'default'){
+                $customQuery .= " genero = '$genero' AND";
+            }
+            if($edad !== 'default'){
+                $customQuery .= " DATE_FORMAT(nacimiento, '%Y') = DATE_FORMAT(DATE_SUB(CURRENT_DATE, interval '$edad'  YEAR), '%Y') AND";
+            }
+
+            if(substr($customQuery,-4) === " AND" ){
+                $customQuery = substr($customQuery,0,-4);
+                $customQuery .= " AND estado = '1'";
+            }
+
+            // Imprimir el query utilizando echo o var_dump
+            //echo "Query: " . $customQuery;
+   
+
+            $response['data']  = DB::select($customQuery);
+
+            return response()->json($response);
+
+        } catch (\Throwable $th) {
+            return json_encode(['status' => 500, 'message' => $th->getMessage()]);
+        }
+
+    }
+
+
 
     public function personDoco(Request $request)
     {
