@@ -208,7 +208,7 @@ class RegisterController extends Controller
         $response = ['status' => 200, 'message' => '', 'data' => []];
         try {
 
-            $customQuery = "SELECT * FROM PERSONA WHERE ";
+            $customQuery = "SELECT * FROM persona WHERE ";
 
             //echo $customQuery;
 
@@ -527,10 +527,10 @@ class RegisterController extends Controller
                     $PA = viewPAFemenino::where('documento', $request->documento)->get();
                 }
 
-                $diagnostico = DB::select ('call apolo.obtenerDatosTallayPeso(?,?)', array($persona->documento,$persona->genero));
+                $diagnostico = DB::select ('call APOLO.obtenerDatosTallayPeso(?,?)', array($persona->documento,$persona->genero));
 
                 if(empty($diagnostico)){
-                    $diagnostico = DB::select ('call apolo.intradiaDatosTallayPeso(?);', array($persona->documento));
+                    $diagnostico = DB::select ('call APOLO.intradiaDatosTallayPeso(?);', array($persona->documento));
                 }
 
                 /*$diagnostico = Historico::where('persona_id', $persona->id)
