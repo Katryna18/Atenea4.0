@@ -230,64 +230,35 @@
                     </div>
 
 
-                    <!--Talla y peso-->
-                    <hr />
+                  <!--Talla y peso-->
+                  <hr />
                     <div class="row">
                         <div class="col-md-12 text-center">
                             <h4>Talla y peso</h4>
                         </div>
-
+                        <div class="row">
                         <div class="col-md-12">
-                            <table width="100%">
-                                <tr>
-                                    <td rowspan="2">
-                                        <div class="text-center">
-                                           <!-- <img src="http://santanacloud.com:8080/Atenea/public/storage/tallaypeso.jpg" alt="Peso y tamaño" width="100%" />-->
-                                            <img src="/storage/tallaypeso.jpg" alt="Peso y tamaño" width="100%" />
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <table class="table table-striped table table-hover">
-                                            <thead class="thead-dark" >
-                                                <tr>
-                                                    <th>Edad</th>
-                                                    <th>Peso</th>
-                                                    <th>Talla (cm)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tableBodyTallaPeso">
+                            <table class="table table-striped table table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Edad</th>
+                                        <th>Peso</th>
+                                        <th>Talla</th>
+                                        <th>Peso Ideal</th>
+                                        <th>Talla Ideal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBodyTallaPeso">
 
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="col-md-12">
-                                            <canvas id="myChartTallaPeso">
-                                            </canvas>
-                                        </div>
-                                    </td>
-                                </tr>
+                                </tbody>
                             </table>
                         </div>
-                    </div>
-                    
-                        
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <canvas id="myChart">
+                        <div class="col-md-12">
+                            <canvas id="myChartTallaPeso">
                             </canvas>
                         </div>
+
                     </div>
-
-                </div>
-            </div>
-
-
-
-        </div>
 
         <input id="hddDocumento" type="hidden" value="{{ $person->documento }}">
     </main>
@@ -673,7 +644,7 @@
                 );
             }
 
-            data.IMC.forEach(element => {
+            data.diagnostico.forEach(element => {
 
                 peso.push(element.peso);
 
@@ -682,7 +653,7 @@
                 label.push(element.altura);
 
                 $("#tableBodyTallaPeso").append(
-                    `<tr> <td>${element.edad}</td> <td>${element.peso}</td> <td>${element.altura}</td> </tr>`
+                    `<tr> <td>${element.edad}</td> <td>${Math.round(element.peso)}</td> <td>${parseFloat(element.altura).toFixed(2)}</td> <td>${element.pesoIdeal}</td> <td>${element.tallaIdeal}</td> </tr>`
                 )
 
             });

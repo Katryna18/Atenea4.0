@@ -50,6 +50,8 @@ Route::get('grupo', 'RegisterController@grupo');
 
 Route::post('person_grafica', 'RegisterController@personGrafica');
 
+Route::post('person_grafica_new', 'RegisterController@personGraficaNew');
+
 Route::post('getHistorico', 'RegisterController@getHistorico');
 
 Route::post('personDelete', 'RegisterController@personDelete');

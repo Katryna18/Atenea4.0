@@ -112,7 +112,7 @@
                         </div>
                         <div class="col-md-1">
 
-                            <button onclick="getDataGrafica()" style="top: 50%; position: relative;" id="btnGuardar"
+                            <button onclick="getDataGraficaNew()" style="top: 50%; position: relative;" id="btnGuardar"
                                 type="button" class="btn btn-success btn-sm">Graficar</button>
 
                         </div>
@@ -198,6 +198,14 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <canvas id="charFCFEMENINO">
+                                </canvas>
+                            </div>
+                        </div>
+
+                        <!-- Se agregan nuevas graficas-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <canvas id="charPAMasculino">
                                 </canvas>
                             </div>
                         </div>
@@ -508,15 +516,45 @@
                 }),
                 dataType: 'json',
                 success: function(data) {
-                    //$("#modal_persons_graficas").modal();
-                    console.log(data)
-                    //IMC(data.IMC);
-                    //FCMasculino(data.FCMasculino);
-                    //FCFemenino(data.FCFemenino);
-                    //PA(data.PA)
+                    $("#modal_persons_graficas").modal();
+                    console.log(data.IMC)
+                    IMC(data.IMC);
+                    FCMasculino(data.FCMasculino);
+                    FCFemenino(data.FCFemenino);
+                    PA(data.PA)
                 }
             });
         }
+
+        function getDataGraficaNew(){
+
+            let dataJson = {
+             "identidad":$("#ddlIeTable").val(),
+             "grado":$("#ddlGradoTable").val(),
+             "grupo": $("#ddlGrupoTable").val(),
+             "jornada": $("#ddlJornada").val(),
+             "genero":$("#ddlSexo").val(),
+             "edad": $("#ddlEdad").val()
+            }
+
+            $.ajax({
+                url: '{{ env('APP_URL_API') . '/person_grafica_new' }}',
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(dataJson),
+                dataType: 'json',
+                success: function(data) {
+                    $("#modal_persons_graficas").modal();
+                    console.log(data)
+                    IMC(data.IMC);
+                    FCMasculino(data.FCMasculino);
+                    FCFemenino(data.FCFemenino);
+                    PAMasculino(data.PAGeneral);
+                    //PAFemenino(data.PAFemenino);
+                }
+            });
+        }
+        
 //Tabla consulta general
         function tabla(data) {
 
@@ -876,6 +914,84 @@
                 backgroundColor: backgroundColor,
                 borderColor: borderColor
             });
+
+        }
+
+        function PAFemenino(data) {
+
+                var datos = [];
+                var label = [];
+                var backgroundColor = [];
+                var borderColor = [];
+
+
+                data.forEach(element => {
+                    datos.push(
+                        element.cantidad,
+                    );
+                    label.push(element.estado);
+
+                    var o = Math.round,
+                        r = Math.random,
+                        s = 255;
+
+                    color1 = o(r() * s);
+                    color2 = o(r() * s);
+                    color3 = o(r() * s);
+
+                    backgroundColor.push('rgba(' + color1 + ',' + color2 + ',' + color3 + ',' + 0.2 + ')');
+                    borderColor.push('rgba(' + color1 + ',' + color2 + ',' + color3 + ',' + 1 + ')');
+                });
+
+
+                garfica({
+                    id: 'charPAFemenino',
+                    type: 'bar',
+                    labels: label,
+                    datos: datos,
+                    titulo: 'Presión arterial femenino',
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor
+                });
+
+        }
+
+        function PAMasculino(data) {
+
+                    var datos = [];
+                    var label = [];
+                    var backgroundColor = [];
+                    var borderColor = [];
+
+
+                    data.forEach(element => {
+                        datos.push(
+                            element.cantidad,
+                        );
+                        label.push(element.estado);
+
+                        var o = Math.round,
+                            r = Math.random,
+                            s = 255;
+
+                        color1 = o(r() * s);
+                        color2 = o(r() * s);
+                        color3 = o(r() * s);
+
+                        backgroundColor.push('rgba(' + color1 + ',' + color2 + ',' + color3 + ',' + 0.2 + ')');
+                        borderColor.push('rgba(' + color1 + ',' + color2 + ',' + color3 + ',' + 1 + ')');
+                    });
+
+
+                    garfica({
+                        id: 'charPAMasculino',
+                        type: 'bar',
+                        labels: label,
+                        datos: datos,
+                        titulo: 'Presión arterial',
+                        backgroundColor: backgroundColor,
+                        borderColor: borderColor
+                    });
 
         }
 

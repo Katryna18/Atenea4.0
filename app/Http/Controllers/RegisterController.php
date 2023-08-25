@@ -12,6 +12,7 @@ use App\Models\ViewFCMasculino;
 use App\Models\ViewIMC;
 use App\Models\viewPAFemenino;
 use App\Models\viewPAMasculino;
+use App\Models\ViewIMCNew;
 use Faker\Provider\ar_EG\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -513,10 +514,6 @@ class RegisterController extends Controller
 
             if ($persona) {
             if (strtoupper($persona->genero) == "MASCULINO") {
-                    $diagnostico = Historico::where('persona_id', $persona->id)
-                    ->where('estado', 1)
-                    ->ORDERBY('created_at')
-                    ->get();
                     $FC = ViewFCMasculino::where('documento', $request->documento)
                     ->where('cod_estado', 1)
                     ->get();
@@ -524,14 +521,23 @@ class RegisterController extends Controller
                 }
 
                 if (strtoupper($persona->genero) == "FEMENINO") {
-                    $diagnostico = Historico::where('persona_id', $persona->id)
-                    ->where('estado', 1)
-                    ->get();
                     $FC = ViewFCFemenino::where('documento', $request->documento)
                     ->where('cod_estado', 1)
                     ->get();
                     $PA = viewPAFemenino::where('documento', $request->documento)->get();
                 }
+
+                $diagnostico = DB::select ('call apolo.obtenerDatosTallayPeso(?,?)', array($persona->documento,$persona->genero));
+
+                if(empty($diagnostico)){
+                    $diagnostico = DB::select ('call apolo.intradiaDatosTallayPeso(?);', array($persona->documento));
+                }
+
+                /*$diagnostico = Historico::where('persona_id', $persona->id)
+                ->where('estado', 1)
+                ->ORDERBY('created_at')
+                ->get();*/
+
 
                 $IMC = ViewIMC::where('documento', $request->documento)
                 ->where('estado_cod', 1)
@@ -608,5 +614,118 @@ class RegisterController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    public function personGraficaNew(Request $request){
+        $response = ['status' => 200, 'message' => 'Registro guardado.', 'data' => []];
+
+        try {
+
+            $customQuery = " SELECT estado,count(*) AS cantidad FROM view_imc_new WHERE ";
+            $customQueryFcFemenino = " SELECT estado,count(*) AS cantidad FROM view_fc_femenino_new WHERE ";
+            $customQueryFcMasculino = " SELECT estado,count(*) AS cantidad FROM view_fc_masculino_new WHERE ";
+            $customQueryPaMasculino = " SELECT estado,count(*) AS cantidad FROM view_pa_general_new WHERE ";
+            //$customQueryPaFemenino = " SELECT estado,count(*) AS cantidad FROM view_pa_femenino_new WHERE ";
+
+            $edad = $request->edad;
+            //var_dump($edad);
+            $grado = $request->grado;
+            //var_dump($grado);
+            $grupo = $request->grupo;
+            //var_dump($grupo);
+            $identidad = $request->identidad;
+            //var_dump($identidad);
+            $jornada = $request->jornada;
+            //var_dump($jornada);
+            $genero = $request->genero;
+            //var_dump($genero);
+
+            
+            if($grado !== 'default'){
+                $customQuery .= " grado = '$grado' AND";
+                $customQueryFcFemenino .= " grado = '$grado' AND";
+                $customQueryFcMasculino .= " grado = '$grado' AND";
+                $customQueryPaMasculino .= " grado = '$grado' AND";
+                //$customQueryPaFemenino .= " grado = '$grado' AND";
+
+            }
+            if($grupo !== 'default'){
+                $customQuery .= " grupo = '$grupo' AND";
+                $customQueryFcFemenino .= " grupo = '$grupo' AND";
+                $customQueryFcMasculino .= " grupo = '$grupo' AND";
+                $customQueryPaMasculino .= " grupo = '$grupo' AND";
+                //$customQueryPaFemenino .= " grupo = '$grupo' AND";
+            }
+            if($identidad !== 'default'){
+                $customQuery .= " entidad = '$identidad' AND";
+                $customQueryFcFemenino .= " entidad = '$identidad' AND";
+                $customQueryFcMasculino .= " entidad = '$identidad' AND";
+                $customQueryPaMasculino .= " entidad = '$identidad' AND";
+                //$customQueryPaFemenino .= " entidad = '$identidad' AND";
+            }
+            if($jornada !== 'default'){
+                $customQuery .= " jornada = '$jornada' AND";
+                $customQueryFcFemenino .= " jornada = '$jornada' AND";
+                $customQueryFcMasculino .= " jornada = '$jornada' AND";
+                $customQueryPaMasculino .= " jornada = '$jornada' AND";
+                //$customQueryPaFemenino .= " jornada = '$jornada' AND";
+            }
+            if($genero !== 'default'){
+                $customQuery .= " genero = '$genero' AND";
+                $customQueryFcFemenino .= " genero = '$genero' AND";
+                $customQueryFcMasculino .= " genero = '$genero' AND";
+                $customQueryPaMasculino .= " genero = '$genero' AND";
+                //$customQueryPaFemenino .= " genero = '$genero' AND";
+            }
+            if($edad !== 'default'){
+                $customQuery .= " edad = '$edad' AND";
+                $customQueryFcFemenino .= " edad = '$edad' AND";
+                $customQueryFcMasculino .= " edad = '$edad' AND";
+                $customQueryPaMasculino .= " edad = '$edad' AND";
+                //$customQueryPaFemenino .= " edad = '$edad' AND";
+            }
+
+            if(substr($customQuery,-4) === " AND" ){
+                $customQuery = substr($customQuery,0,-4);
+                $customQuery .= " group by estado ";
+            }
+            if(substr($customQueryFcFemenino,-4) === " AND" ){
+                $customQueryFcFemenino = substr($customQueryFcFemenino,0,-4);
+                $customQueryFcFemenino .= " group by estado ";
+            }
+            if(substr($customQueryFcMasculino,-4) === " AND" ){
+                $customQueryFcMasculino = substr($customQueryFcMasculino,0,-4);
+                $customQueryFcMasculino .= " group by estado ";
+            }
+            if(substr($customQueryPaMasculino,-4) === " AND" ){
+                $customQueryPaMasculino = substr($customQueryPaMasculino,0,-4);
+                $customQueryPaMasculino .= " group by estado ";
+            }
+            /*if(substr($customQueryPaFemenino,-4) === " AND" ){
+                $customQueryPaFemenino = substr($customQueryPaFemenino,0,-4);
+                $customQueryPaFemenino .= " group by estado ";
+            }*/
+
+            /*echo $customQuery;
+            echo $customQueryFcFemenino;
+            echo $customQueryFcMasculino;*/
+
+            $imc = DB::select($customQuery);
+            $FCFemenino = DB::select($customQueryFcFemenino);
+            $FCMasculino = DB::select($customQueryFcMasculino);
+            $PAMasculino = DB::select($customQueryPaMasculino);
+            //$PAFemenino = DB::select($customQueryFcMasculino);
+
+            $response['IMC'] =  $imc;
+            $response['FCFemenino'] =  $FCFemenino;
+            $response['FCMasculino'] =  $FCMasculino;
+            $response['PAGeneral'] =  $PAMasculino;
+            //$response['PAMasculino'] =  $PAFemenino;
+        } catch (\Throwable $th) {
+            $response['message']=$th->getMessage().' - '.$th->getLine();
+        }
+
+        return response()->json($response);
+    
     }
 }
