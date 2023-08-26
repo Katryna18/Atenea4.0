@@ -20,14 +20,9 @@
                     <div class="row">
 
                         <div class="col-md-10">
-                            <label for="ddlIeTable">Número de documento</label>
-                            <input id="txtNumDocumento" class="form-control form-control-sm">
+                            <label for="ddlIeTable">Número de documento </label>
+                            <input id="txtNumDocumento" placeholder="Introduza numero de documento"  class="form-control form-control-sm"  >
                         </div>
-                        <div class="col-md-2">
-                            <button onclick="getDataNumeroDoco()" style="top: 50%; position: relative;" type="button"
-                                class="btn btn-primary btn-sm">Consultar</button>
-                        </div>
-
                     </div>
 
                     <div class="row">
@@ -209,6 +204,12 @@
                                 </canvas>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <canvas id="charTyP">
+                                </canvas>
+                            </div>
+                        </div>
                     </div>
 
 
@@ -350,10 +351,13 @@
              "grupo": $("#ddlGrupoTable").val(),
              "jornada": $("#ddlJornada").val(),
              "genero":$("#ddlSexo").val(),
-             "edad": $("#ddlEdad").val()
+             "edad": $("#ddlEdad").val(),
+             "documento": $("#txtNumDocumento").val()
             }
 
-            if (dataJson.identidad == "default" && dataJson.grado == "default" && dataJson.grupo == "default" && dataJson.jornada == "default" && dataJson.genero == "default" && dataJson.edad == "default") {
+            console.log(dataJson)
+
+            if (dataJson.identidad == "default" && dataJson.grado == "default" && dataJson.grupo == "default" && dataJson.jornada == "default" && dataJson.genero == "default" && dataJson.edad == "default" && dataJson.documento == "") {
                 Swal.fire(
                             '',
                             'Seleccione los campos a consultar',
@@ -534,7 +538,8 @@
              "grupo": $("#ddlGrupoTable").val(),
              "jornada": $("#ddlJornada").val(),
              "genero":$("#ddlSexo").val(),
-             "edad": $("#ddlEdad").val()
+             "edad": $("#ddlEdad").val(),
+             "documento" : $("#txtNumDocumento").val()
             }
 
             $.ajax({
@@ -550,7 +555,7 @@
                     FCMasculino(data.FCMasculino);
                     FCFemenino(data.FCFemenino);
                     PAMasculino(data.PAGeneral);
-                    //PAFemenino(data.PAFemenino);
+                    TyP(data.TyP);
                 }
             });
         }
@@ -950,6 +955,56 @@
                     labels: label,
                     datos: datos,
                     titulo: 'Presión arterial femenino',
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor
+                });
+
+        }
+
+        function TyP(data) {
+
+            console.log(data)
+
+            let arrayNewObject = [];
+
+            data.forEach(element => {
+                element.forEach(res =>{
+                    arrayNewObject.push(res)
+                })        
+            });
+
+
+            var datos = [];
+            var label = [];
+            var backgroundColor = [];
+            var borderColor = [];
+
+
+            arrayNewObject.forEach(element => {
+                    datos.push(
+                        element.cantidad,
+                    );
+                    label.push(element.agrupador);
+
+                    var o = Math.round,
+                        r = Math.random,
+                        s = 255;
+
+                    color1 = o(r() * s);
+                    color2 = o(r() * s);
+                    color3 = o(r() * s);
+
+                    backgroundColor.push('rgba(' + color1 + ',' + color2 + ',' + color3 + ',' + 0.2 + ')');
+                    borderColor.push('rgba(' + color1 + ',' + color2 + ',' + color3 + ',' + 1 + ')');
+                });
+
+
+                garfica({
+                    id: 'charTyP',
+                    type: 'bar',
+                    labels: label,
+                    datos: datos,
+                    titulo: 'Talla y Peso',
                     backgroundColor: backgroundColor,
                     borderColor: borderColor
                 });

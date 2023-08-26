@@ -224,6 +224,7 @@ class RegisterController extends Controller
             //var_dump($jornada);
             $genero = $request->genero;
             //var_dump($genero);
+            $documento = $request->documento;
 
             
             if($grado !== 'default'){
@@ -243,6 +244,9 @@ class RegisterController extends Controller
             }
             if($edad !== 'default'){
                 $customQuery .= " DATE_FORMAT(nacimiento, '%Y') = DATE_FORMAT(DATE_SUB(CURRENT_DATE, interval '$edad'  YEAR), '%Y') AND";
+            }
+            if($documento != ""){
+                $customQuery .= " documento = '$documento' AND";
             }
 
             if(substr($customQuery,-4) === " AND" ){
@@ -625,6 +629,8 @@ class RegisterController extends Controller
             $customQueryFcFemenino = " SELECT estado,count(*) AS cantidad FROM view_fc_femenino_new WHERE ";
             $customQueryFcMasculino = " SELECT estado,count(*) AS cantidad FROM view_fc_masculino_new WHERE ";
             $customQueryPaMasculino = " SELECT estado,count(*) AS cantidad FROM view_pa_general_new WHERE ";
+            $customQueryTyPP= "SELECT count(*) as cantidad,peso as agrupador FROM APOLO.view_tallaypeso WHERE ";
+            $customQueryTyPT= "SELECT count(*) as cantidad,talla  as agrupador FROM APOLO.view_tallaypeso WHERE ";
             //$customQueryPaFemenino = " SELECT estado,count(*) AS cantidad FROM view_pa_femenino_new WHERE ";
 
             $edad = $request->edad;
@@ -639,6 +645,7 @@ class RegisterController extends Controller
             //var_dump($jornada);
             $genero = $request->genero;
             //var_dump($genero);
+            $documento = $request->documento;
 
             
             if($grado !== 'default'){
@@ -646,7 +653,8 @@ class RegisterController extends Controller
                 $customQueryFcFemenino .= " grado = '$grado' AND";
                 $customQueryFcMasculino .= " grado = '$grado' AND";
                 $customQueryPaMasculino .= " grado = '$grado' AND";
-                //$customQueryPaFemenino .= " grado = '$grado' AND";
+                $customQueryTyPP .= " grado = '$grado' AND";
+                $customQueryTyPT .= " grado = '$grado' AND";
 
             }
             if($grupo !== 'default'){
@@ -654,35 +662,49 @@ class RegisterController extends Controller
                 $customQueryFcFemenino .= " grupo = '$grupo' AND";
                 $customQueryFcMasculino .= " grupo = '$grupo' AND";
                 $customQueryPaMasculino .= " grupo = '$grupo' AND";
-                //$customQueryPaFemenino .= " grupo = '$grupo' AND";
+                $customQueryTyPP .= " grupo = '$grupo' AND";
+                $customQueryTyPT .= " grupo = '$grupo' AND";
+
             }
             if($identidad !== 'default'){
                 $customQuery .= " entidad = '$identidad' AND";
                 $customQueryFcFemenino .= " entidad = '$identidad' AND";
                 $customQueryFcMasculino .= " entidad = '$identidad' AND";
                 $customQueryPaMasculino .= " entidad = '$identidad' AND";
-                //$customQueryPaFemenino .= " entidad = '$identidad' AND";
+                $customQueryTyPP .= " entidad = '$identidad' AND";
+                $customQueryTyPT .= " entidad = '$identidad' AND";
             }
             if($jornada !== 'default'){
                 $customQuery .= " jornada = '$jornada' AND";
                 $customQueryFcFemenino .= " jornada = '$jornada' AND";
                 $customQueryFcMasculino .= " jornada = '$jornada' AND";
                 $customQueryPaMasculino .= " jornada = '$jornada' AND";
-                //$customQueryPaFemenino .= " jornada = '$jornada' AND";
+                $customQueryTyPP .= " jornada = '$jornada' AND";
+                $customQueryTyPT .= " jornada = '$jornada' AND";
             }
             if($genero !== 'default'){
                 $customQuery .= " genero = '$genero' AND";
                 $customQueryFcFemenino .= " genero = '$genero' AND";
                 $customQueryFcMasculino .= " genero = '$genero' AND";
                 $customQueryPaMasculino .= " genero = '$genero' AND";
-                //$customQueryPaFemenino .= " genero = '$genero' AND";
+                $customQueryTyPP .= " genero = '$genero' AND";
+                $customQueryTyPT .= " genero = '$genero' AND";
             }
             if($edad !== 'default'){
                 $customQuery .= " edad = '$edad' AND";
                 $customQueryFcFemenino .= " edad = '$edad' AND";
                 $customQueryFcMasculino .= " edad = '$edad' AND";
                 $customQueryPaMasculino .= " edad = '$edad' AND";
-                //$customQueryPaFemenino .= " edad = '$edad' AND";
+                $customQueryTyPP .= " edad = '$edad' AND";
+                $customQueryTyPT .= " edad = '$edad' AND";
+            }
+            if($documento !== ''){
+                $customQuery .= " documento = '$documento' AND";
+                $customQueryFcFemenino .= " documento = '$documento' AND";
+                $customQueryFcMasculino .= " documento = '$documento' AND";
+                $customQueryPaMasculino .= " documento = '$documento' AND";
+                $customQueryTyPP .= " documento = '$documento' AND";
+                $customQueryTyPT .= " documento = '$documento' AND";
             }
 
             if(substr($customQuery,-4) === " AND" ){
@@ -701,26 +723,31 @@ class RegisterController extends Controller
                 $customQueryPaMasculino = substr($customQueryPaMasculino,0,-4);
                 $customQueryPaMasculino .= " group by estado ";
             }
-            /*if(substr($customQueryPaFemenino,-4) === " AND" ){
-                $customQueryPaFemenino = substr($customQueryPaFemenino,0,-4);
-                $customQueryPaFemenino .= " group by estado ";
-            }*/
+            if(substr($customQueryTyPP,-4) === " AND" ){
+                $customQueryTyPP = substr($customQueryTyPP,0,-4);
+                $customQueryTyPP .= " group by peso ";
+            }
+            if(substr($customQueryTyPT,-4) === " AND" ){
+                $customQueryTyPT = substr($customQueryTyPT,0,-4);
+                $customQueryTyPT .= " group by talla ";
+            }
+            
 
-            /*echo $customQuery;
-            echo $customQueryFcFemenino;
-            echo $customQueryFcMasculino;*/
+
 
             $imc = DB::select($customQuery);
             $FCFemenino = DB::select($customQueryFcFemenino);
             $FCMasculino = DB::select($customQueryFcMasculino);
             $PAMasculino = DB::select($customQueryPaMasculino);
+            $TyPP = DB::select($customQueryTyPP);
+            $TyPT = DB::select($customQueryTyPT);
             //$PAFemenino = DB::select($customQueryFcMasculino);
 
             $response['IMC'] =  $imc;
             $response['FCFemenino'] =  $FCFemenino;
             $response['FCMasculino'] =  $FCMasculino;
             $response['PAGeneral'] =  $PAMasculino;
-            //$response['PAMasculino'] =  $PAFemenino;
+            $response['TyP'] =  array($TyPP,$TyPT);
         } catch (\Throwable $th) {
             $response['message']=$th->getMessage().' - '.$th->getLine();
         }
